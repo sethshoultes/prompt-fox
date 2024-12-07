@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save ChatGPT Prompts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <h2>Save ChatGPT Prompt</h2>
+    <!-- Textarea for displaying and editing captured text -->
+    <textarea id="text-input" placeholder="Captured text will appear here..."></textarea>
+    
+    <!-- Dropdown for selecting a category -->
+    <select id="category">
+      <option value="general">General</option>
+      <option value="ideas">Ideas</option>
+      <option value="tasks">Tasks</option>
+    </select>
+    
+    <!-- Button to trigger the save functionality -->
+    <button id="save-button">Save</button>
+    
+    <!-- Confirmation message after saving -->
+    <div id="confirmation" style="display: none; color: green; margin-top: 10px;">
+      Text saved successfully!
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
