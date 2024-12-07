@@ -1,32 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Save ChatGPT Prompts</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>Prompt Fox</title>
+    <style>
+        body {
+            width: 400px;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .tab-button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: #f0f0f0;
+            cursor: pointer;
+        }
+        .tab-button.active {
+            background: #0073aa;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        select {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        button {
+            padding: 8px 15px;
+            background: #0073aa;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #005177;
+        }
+        #confirmation {
+            display: none;
+            color: green;
+            margin-top: 10px;
+        }
+        #prompts-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .prompt-item {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.2s;
+        }
+        .prompt-item:hover {
+            background-color: #f8f9fa;
+        }
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .prompt-title {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .prompt-date {
+            font-size: 0.85em;
+            color: #666;
+        }
+        .prompt-preview {
+            color: #555;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .prompt-categories {
+            margin-bottom: 8px;
+        }
+        .category-tag {
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-right: 5px;
+            color: #495057;
+        }
+        .search-box {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 5px;
+            font-size: 0.9em;
+            background: white;
+        }
+        .preview-btn {
+            color: #666;
+        }
+        .copy-btn {
+            color: #0073aa;
+        }
+        .insert-btn {
+            color: #28a745;
+        }
+        .btn-icon {
+            font-size: 1.1em;
+        }
+        .pagination {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-  <div id="app">
-    <h2>Save ChatGPT Prompt</h2>
-    <!-- Textarea for displaying and editing captured text -->
-    <textarea id="text-input" placeholder="Captured text will appear here..."></textarea>
-    
-    <!-- Dropdown for selecting a category -->
-    <select id="category">
-      <option value="general">General</option>
-      <option value="ideas">Ideas</option>
-      <option value="tasks">Tasks</option>
-    </select>
-    
-    <!-- Button to trigger the save functionality -->
-    <button id="save-button">Save</button>
-    
-    <!-- Confirmation message after saving -->
-    <div id="confirmation" style="display: none; color: green; margin-top: 10px;">
-      Text saved successfully!
+    <div class="tab-buttons">
+        <button class="tab-button active" data-tab="save">Save Prompt</button>
+        <button class="tab-button" data-tab="browse">Browse Prompts</button>
     </div>
-  </div>
-  <script src="popup.js"></script>
+
+    <div id="save-tab" class="tab-content active">
+        <textarea id="text-input" placeholder="Enter or paste text here..."></textarea>
+        <select id="category">
+            <option value="">Select Category</option>
+            <option value="general">General</option>
+            <option value="ideas">Ideas</option>
+            <option value="tasks">Tasks</option>
+            <option value="quotes">Quotes</option>
+            <option value="funny">Funny</option>
+            <option value="advice">Advice</option>
+            <option value="others">Others</option>
+        </select> 
+        <button id="save-button">Save</button>
+        <div id="confirmation"></div>
+    </div>
+
+    <div id="browse-tab" class="tab-content">
+        <input type="text" id="search-input" class="search-box" placeholder="Search prompts...">
+        <div id="prompts-list"></div>
+        <div id="pagination"></div>
+    </div>
+
+    <script src="popup.js"></script>
 </body>
 </html>

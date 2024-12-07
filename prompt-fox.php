@@ -73,12 +73,51 @@ add_action('init', 'register_text_strings_cpt');
 
 // Register REST API Endpoint
 function register_save_strings_endpoint() {
+    // Register POST endpoint for saving strings
     register_rest_route('custom/v1', '/strings', [
         'methods' => ['POST', 'OPTIONS'],
         'callback' => 'save_text_string',
         'permission_callback' => function () {
             return current_user_can('edit_posts');
         },
+    ]);
+
+    // Register GET endpoint for fetching strings
+    register_rest_route('custom/v1', '/strings', [
+        'methods' => 'GET',
+        'callback' => 'get_text_strings',
+        'permission_callback' => function () {
+            return current_user_can('edit_posts');
+        },
+        'args' => [
+            'per_page' => [
+                'default' => 10,
+                'sanitize_callback' => 'absint'
+            ],
+            'page' => [
+                'default' => 1,
+                'sanitize_callback' => 'absint'
+            ],
+            'search' => [
+                'default' => '',
+                'sanitize_callback' => 'sanitize_text_field'
+            ]
+        ]
+    ]);
+
+    register_rest_route('custom/v1', '/strings/(?P<id>\d+)', [
+        'methods' => 'GET',
+        'callback' => 'get_single_text_string',
+        'permission_callback' => function () {
+            return current_user_can('edit_posts');
+        },
+        'args' => [
+            'id' => [
+                'validate_callback' => function($param) {
+                    return is_numeric($param);
+                }
+            ]
+        ]
     ]);
 }
 add_action('rest_api_init', 'register_save_strings_endpoint');
@@ -127,6 +166,74 @@ function save_text_string(WP_REST_Request $request) {
 
     pf_log('Text saved successfully with ID: ' . $post_id);
     return rest_ensure_response(['success' => true, 'post_id' => $post_id]);
+}
+function get_text_strings(WP_REST_Request $request) {
+    $per_page = $request->get_param('per_page');
+    $page = $request->get_param('page');
+    $search = $request->get_param('search');
+
+    $args = [
+        'post_type' => 'text_string',
+        'posts_per_page' => $per_page,
+        'paged' => $page,
+        'orderby' => 'date',
+        'order' => 'DESC',
+    ];
+
+    if (!empty($search)) {
+        $args['s'] = $search;
+    }
+
+    $query = new WP_Query($args);
+    $posts = [];
+
+    foreach ($query->posts as $post) {
+        $categories = wp_get_post_terms($post->ID, 'string_category', ['fields' => 'names']);
+        $posts[] = [
+            'id' => $post->ID,
+            'title' => $post->post_title,
+            'content' => $post->post_content,
+            'date' => $post->post_date,
+            'categories' => $categories
+        ];
+    }
+
+    $total_posts = $query->found_posts;
+    $total_pages = ceil($total_posts / $per_page);
+
+    return rest_ensure_response([
+        'success' => true,
+        'data' => $posts,
+        'total' => $total_posts,
+        'total_pages' => $total_pages,
+        'current_page' => $page
+    ]);
+}
+
+function get_single_text_string(WP_REST_Request $request) {
+    $post_id = $request->get_param('id');
+    $post = get_post($post_id);
+
+    if (!$post || $post->post_type !== 'text_string') {
+        return new WP_Error(
+            'not_found', 
+            'Prompt not found', 
+            ['status' => 404]
+        );
+    }
+
+    $categories = wp_get_post_terms($post->ID, 'string_category', ['fields' => 'names']);
+    
+    return rest_ensure_response([
+        'success' => true,
+        'data' => [
+            'id' => $post->ID,
+            'title' => $post->post_title,
+            'content' => $post->post_content,
+            'date' => $post->post_date,
+            'categories' => $categories
+        ]
+    ]);
 }
 
 // Add settings page

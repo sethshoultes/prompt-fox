@@ -134,6 +134,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       });
   } else if (message.type === "getCapturedText") {
       sendResponse({ text: capturedText });
+  }else if (message.type === "getCredentials") {
+      getStoredCredentials().then(sendResponse);
+      return true;
   }
   return true;
 });
