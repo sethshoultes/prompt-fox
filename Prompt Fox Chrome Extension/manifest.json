@@ -20,6 +20,7 @@
         "js": ["content.js"]
       }
     ],
+    "options_page": "options.html",
     "permissions": ["activeTab", "storage", "scripting"],
     "host_permissions": ["https://chat.openai.com/*"]
   }

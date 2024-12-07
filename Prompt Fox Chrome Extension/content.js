@@ -1,21 +1,23 @@
-// Log to confirm that content.js is running
-console.log("content.js is active");
+// content.js
+console.log("Prompt Fox content script loaded");
 
-// Listen for text selection on the page
+// Listen for text selection
 document.addEventListener("mouseup", () => {
-    console.log("Mouse up event triggered"); // Debug log
-  const selectedText = window.getSelection().toString().trim();
-  
-  if (selectedText) {
-    console.log("Selected text:", selectedText); // Debug log for selected text
+    const selectedText = window.getSelection().toString().trim();
     
-    // Send the captured text to the background script
-    chrome.runtime.sendMessage({ type: "captureText", text: selectedText }, (response) => {
-      if (response && response.status === "success") {
-        console.log("Text successfully sent to background script");
-      } else {
-        console.error("Failed to send text to background script");
-      }
-    });
-  }
+    if (selectedText) {
+        console.log("Text selected:", selectedText.substring(0, 50) + "...");
+        
+        // Send selected text to background script
+        chrome.runtime.sendMessage({ 
+            type: "captureText", 
+            text: selectedText 
+        }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Error sending text:", chrome.runtime.lastError);
+                return;
+            }
+            console.log("Text capture response:", response);
+        });
+    }
 });
