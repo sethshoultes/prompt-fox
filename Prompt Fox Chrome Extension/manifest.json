@@ -20,9 +20,18 @@
         "js": ["content.js"]
       }
     ],
-     "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'"
-      },
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "options.html",
+          "options.js",
+          "icon16.png",
+          "icon48.png",
+          "icon128.png"
+        ],
+        "matches": ["<all_urls>"]
+      }
+    ],
     "options_page": "options.html",
     "permissions": ["activeTab", "storage", "scripting"],
     "host_permissions": ["https://chat.openai.com/*"]

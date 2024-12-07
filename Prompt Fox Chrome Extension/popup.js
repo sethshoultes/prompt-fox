@@ -173,6 +173,7 @@ function formatDate(dateString) {
     });
 }
 
+
 async function previewPrompt(promptId) {
     const content = await getPromptContent(promptId);
     if (content) {
@@ -181,63 +182,64 @@ async function previewPrompt(promptId) {
 }
 
 function showModal(title, content) {
+  // Remove any existing modal
+  const existingModal = document.querySelector('.modal-overlay');
+  if (existingModal) {
+      existingModal.remove();
+  }
 
-  const copyButton = modalContent.querySelector('button:first-child');
-    const closeButton = modalContent.querySelector('button:last-child');
+  // Create modal elements
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'modal-overlay';
+  
+  const modalContent = document.createElement('div');
+  modalContent.className = 'modal-content';
+  
+  modalContent.innerHTML = `
+      <div class="modal-header">
+          <h3>${title}</h3>
+          <button class="close-modal">×</button>
+      </div>
+      <div class="modal-body">
+          <pre>${content}</pre>
+      </div>
+      <div class="modal-footer">
+          <button class="copy-btn">Copy</button>
+          <button class="close-btn">Close</button>
+      </div>
+  `;
 
-    copyButton.addEventListener('click', () => copyToClipboard(content));
-    closeButton.addEventListener('click', () => modalOverlay.remove());
-    // Remove any existing modal
-    const existingModal = document.querySelector('.modal-overlay');
-    if (existingModal) {
-        existingModal.remove();
-    }
+  modalOverlay.appendChild(modalContent);
+  document.body.appendChild(modalOverlay);
 
-    // Create modal elements
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'modal-overlay';
-    
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content';
-    
-    modalContent.innerHTML = `
-        <div class="modal-header">
-            <h3>${title}</h3>
-            <button class="close-modal">×</button>
-        </div>
-        <div class="modal-body">
-            <pre>${content}</pre>
-        </div>
-        <div class="modal-footer">
-            <button onclick="copyToClipboard('${content}')">Copy</button>
-            <button onclick="document.querySelector('.modal-overlay').remove()">Close</button>
-        </div>
-    `;
+  // Attach event listeners to the buttons
+  const copyButton = modalContent.querySelector('.copy-btn');
+  const closeButton = modalContent.querySelector('.close-btn');
+  const closeModalButton = modalContent.querySelector('.close-modal');
 
-    modalOverlay.appendChild(modalContent);
-    document.body.appendChild(modalOverlay);
+  copyButton.addEventListener('click', () => copyToClipboard(content));
+  closeButton.addEventListener('click', () => modalOverlay.remove());
+  closeModalButton.addEventListener('click', () => modalOverlay.remove());
 
-    // Close modal when clicking the close button or outside the modal
-    modalOverlay.querySelector('.close-modal').addEventListener('click', () => {
-        modalOverlay.remove();
-    });
-
-    modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
-            modalOverlay.remove();
-        }
-    });
+  // Close modal when clicking outside the modal content
+  modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+          modalOverlay.remove();
+      }
+  });
 }
 
-async function copyToClipboard(text) {
-    try {
-        await navigator.clipboard.writeText(text);
-        showConfirmation("Copied to clipboard!");
-    } catch (err) {
-        showError("Failed to copy to clipboard");
-    }
+async function copyToClipboard(promptId) {
+  const content = await getPromptContent(promptId);
+  if (content) {
+      try {
+          await navigator.clipboard.writeText(content);
+          showConfirmation("Copied to clipboard!");
+      } catch (err) {
+          showError("Failed to copy to clipboard");
+      }
+  }
 }
-
 async function insertAtCursor(promptId) {
     const content = await getPromptContent(promptId);
     if (content) {
