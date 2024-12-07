@@ -26,14 +26,16 @@ chrome.runtime.onInstalled.addListener(() => {
         },
         body: JSON.stringify({
           text_string: text,
-          category: category
+          category: category,
+          username: USERNAME,
+          password: APPLICATION_PASSWORD
         })
       });
   
       if (!response.ok) {
-        const error = await response.json();
-        console.error("Error saving text:", error);
-        return { status: "error", message: `Failed to save text to WordPress API: ${error.message || "Unknown error"}` };
+        const errorText = await response.text();
+        console.error("Error from API:", errorText);
+        return { status: "error", message: `HTTP ${response.status}: ${errorText}` };
       }
   
       const data = await response.json();
