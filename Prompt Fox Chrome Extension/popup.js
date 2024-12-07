@@ -68,73 +68,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Added displayPrompts function
 function displayPrompts(data) {
-    const promptsList = document.getElementById('prompts-list');
-    promptsList.innerHTML = '';
+  const promptsList = document.getElementById('prompts-list');
+  promptsList.innerHTML = '';
 
-    if (!data.data || data.data.length === 0) {
-        promptsList.innerHTML = '<div class="no-results">No prompts found</div>';
-        return;
-    }
+  if (!data.data || data.data.length === 0) {
+      promptsList.innerHTML = '<div class="no-results">No prompts found</div>';
+      return;
+  }
 
-    data.data.forEach(prompt => {
-        const promptDiv = document.createElement('div');
-        promptDiv.className = 'prompt-item';
+  data.data.forEach(prompt => {
+      const promptDiv = document.createElement('div');
+      promptDiv.className = 'prompt-item';
 
-        const previewBtn = promptDiv.querySelector('.preview-btn');
-        const copyBtn = promptDiv.querySelector('.copy-btn');
-        const insertBtn = promptDiv.querySelector('.insert-btn');
+      // Create a preview of the content
+      const contentPreview = prompt.content.length > 100 
+          ? prompt.content.substring(0, 100) + '...' 
+          : prompt.content;
 
-        if (previewBtn) {
-            previewBtn.addEventListener('click', () => previewPrompt(prompt.id));
-        }
-        if (copyBtn) {
-            copyBtn.addEventListener('click', () => copyToClipboard(prompt.id));
-        }
-        if (insertBtn) {
-            insertBtn.addEventListener('click', () => insertAtCursor(prompt.id));
-        }
+      promptDiv.innerHTML = `
+          <div class="prompt-header">
+              <span class="prompt-title">${prompt.title}</span>
+              <span class="prompt-date">${formatDate(prompt.date)}</span>
+          </div>
+          <div class="prompt-preview">${contentPreview}</div>
+          <div class="prompt-categories">
+              ${prompt.categories.map(cat => `<span class="category-tag">${cat}</span>`).join('')}
+          </div>
+          <div class="prompt-actions">
+              <button class="action-btn preview-btn" data-prompt-id="${prompt.id}">
+                  <span class="btn-icon">👁️</span> Preview
+              </button>
+              <button class="action-btn copy-btn" data-prompt-id="${prompt.id}">
+                  <span class="btn-icon">📋</span> Copy
+              </button>
+              <button class="action-btn insert-btn" data-prompt-id="${prompt.id}">
+                  <span class="btn-icon">➡️</span> Insert
+              </button>
+          </div>
+      `;
+      
+      // Attach event listeners to the buttons
+      const previewBtn = promptDiv.querySelector('.preview-btn');
+      const copyBtn = promptDiv.querySelector('.copy-btn');
+      const insertBtn = promptDiv.querySelector('.insert-btn');
 
-        // Create a preview of the content
-        const contentPreview = prompt.content.length > 100 
-            ? prompt.content.substring(0, 100) + '...' 
-            : prompt.content;
+      previewBtn.addEventListener('click', () => previewPrompt(prompt.id));
+      copyBtn.addEventListener('click', () => copyToClipboard(prompt.id));
+      insertBtn.addEventListener('click', () => insertAtCursor(prompt.id));
 
-        promptDiv.innerHTML = `
-            <div class="prompt-header">
-                <span class="prompt-title">${prompt.title}</span>
-                <span class="prompt-date">${formatDate(prompt.date)}</span>
-            </div>
-            <div class="prompt-preview">${contentPreview}</div>
-            <div class="prompt-categories">
-                ${prompt.categories.map(cat => `<span class="category-tag">${cat}</span>`).join('')}
-            </div>
-            <div class="prompt-actions">
-                <button class="action-btn preview-btn" data-prompt-id="${prompt.id}">
-                    <span class="btn-icon">👁️</span> Preview
-                </button>
-                <button class="action-btn copy-btn" data-prompt-id="${prompt.id}">
-                    <span class="btn-icon">📋</span> Copy
-                </button>
-                <button class="action-btn insert-btn" data-prompt-id="${prompt.id}">
-                    <span class="btn-icon">➡️</span> Insert
-                </button>
-            </div>
-        `;
-        promptsList.appendChild(promptDiv);
-    });
+      promptsList.appendChild(promptDiv);
+  });
 
-    // Add pagination
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-    if (data.total_pages > 1) {
-        pagination.innerHTML = `
-            <div class="pagination">
-                ${currentPage > 1 ? `<button onclick="changePage(${currentPage - 1})">Previous</button>` : ''}
-                <span>Page ${currentPage} of ${data.total_pages}</span>
-                ${currentPage < data.total_pages ? `<button onclick="changePage(${currentPage + 1})">Next</button>` : ''}
-            </div>
-        `;
-    }
+  // Add pagination
+  const pagination = document.getElementById('pagination');
+  pagination.innerHTML = '';
+  if (data.total_pages > 1) {
+      pagination.innerHTML = `
+          <div class="pagination">
+              ${currentPage > 1 ? `<button onclick="changePage(${currentPage - 1})">Previous</button>` : ''}
+              <span>Page ${currentPage} of ${data.total_pages}</span>
+              ${currentPage < data.total_pages ? `<button onclick="changePage(${currentPage + 1})">Next</button>` : ''}
+          </div>
+      `;
+  }
 }
 
 async function loadPrompts() {
