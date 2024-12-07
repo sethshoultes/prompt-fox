@@ -12,14 +12,18 @@ if (!defined('ABSPATH')) {
 
 // Enable CORS for REST API
 add_action('rest_api_init', function () {
-    $headers = getallheaders();
+    //$headers = getallheaders();
     //error_log("Authorization Header: " . $headers['Authorization'] ?? 'Not Set');
+    add_filter('rest_pre_serve_request', function ($value) {
+        return true;
+    });
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Credentials: true");
+
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        header("Access-Control-Allow-Origin: *"); // Replace * with your extension origin
-        header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization");
-        header("Access-Control-Allow-Credentials: true");
-        exit; // Exit early for preflight requests
+        exit;
     }
 }, 15);
 
@@ -91,3 +95,56 @@ function save_text_string(WP_REST_Request $request) {
 
     return rest_ensure_response(['success' => true, 'post_id' => $post_id]);
 }
+
+// Add a settings page to the WordPress admin menu
+add_action('admin_menu', function () {
+    add_options_page(
+        'Prompt Fox Settings',       // Page title
+        'Prompt Fox',                // Menu title
+        'manage_options',            // Capability required
+        'prompt-fox-settings',       // Menu slug
+        'render_prompt_fox_settings' // Callback to display the page
+    );
+});
+// Callback function to render the settings page
+function render_prompt_fox_settings() {
+    // Get the REST API URL dynamically
+    $rest_api_url = get_rest_url(null, 'custom/v1/strings');
+
+    ?>
+    <div class="wrap">
+        <h1>Prompt Fox Settings</h1>
+        <p>This is your REST API endpoint. Use this URL in your Chrome extension settings:</p>
+        <input type="text" value="<?php echo esc_url($rest_api_url); ?>" readonly style="width: 100%; padding: 8px;">
+        <p>Provide your WordPress username and an application password in the Chrome extension settings.</p>
+        <p>
+            <strong>How to Generate an Application Password:</strong>
+            <ol>
+                <li>Go to <strong>Users > Profile</strong> in the WordPress admin panel.</li>
+                <li>Scroll down to <strong>Application Passwords</strong> and create a new one.</li>
+                <li>Copy the generated password and use it in the Chrome extension.</li>
+            </ol>
+        </p>
+    </div>
+    <?php
+}
+function add_prompt_fox_admin_styles() {
+    echo '<style>
+        .wrap h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .wrap p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        input[readonly] {
+            font-family: monospace;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>';
+}
+add_action('admin_head', 'add_prompt_fox_admin_styles');
