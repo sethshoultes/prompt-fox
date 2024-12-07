@@ -14,10 +14,6 @@ chrome.runtime.onInstalled.addListener(() => {
 
 let capturedText = "";
 
-/**
- * Gets the stored credentials and API URL
- * @returns {Promise<{apiBaseUrl: string, username: string, applicationPassword: string}>}
- */
 async function getStoredCredentials() {
   return new Promise((resolve) => {
     chrome.storage.sync.get({
@@ -25,16 +21,15 @@ async function getStoredCredentials() {
       username: '',
       applicationPassword: ''
     }, (items) => {
-      resolve(items);
+      resolve({
+        apiBaseUrl: items.apiBaseUrl?.trim().replace(/\/$/, ''), // Remove trailing slash
+        username: items.username?.trim(),
+        applicationPassword: items.applicationPassword // Keep application password as is
+      });
     });
   });
 }
 
-/**
- * Validates URL format
- * @param {string} url
- * @returns {boolean}
- */
 function isValidUrl(url) {
   try {
     new URL(url);
@@ -44,15 +39,15 @@ function isValidUrl(url) {
   }
 }
 
-/**
- * Saves text to WordPress under a specified category
- * @param {string} text - The text to be saved
- * @param {string} category - The category under which the text will be saved
- * @returns {Promise<Object>} - Status and message
- */
 async function saveTextToWordPress(text, category) {
   try {
     const credentials = await getStoredCredentials();
+    console.log('Credentials check:', {
+      hasUrl: Boolean(credentials.apiBaseUrl),
+      hasUsername: Boolean(credentials.username),
+      hasPassword: Boolean(credentials.applicationPassword),
+      urlLength: credentials.apiBaseUrl?.length
+    });
     
     if (!credentials.apiBaseUrl || !credentials.username || !credentials.applicationPassword) {
       return { 
@@ -70,31 +65,28 @@ async function saveTextToWordPress(text, category) {
 
     const apiEndpoint = `${credentials.apiBaseUrl}/wp-json/custom/v1/strings`;
     
-    // Create the authentication header
-    const auth = btoa(credentials.username + ':' + credentials.applicationPassword.trim());
-    console.log('Making request to:', apiEndpoint);
-
-    // First, make a test OPTIONS request
-    const optionsResponse = await fetch(apiEndpoint, {
-      method: 'OPTIONS',
-      headers: {
-        'Authorization': `Basic ${auth}`
-      }
-    });
+    // Create authorization header with exact password
+    const authString = `${credentials.username}:${credentials.applicationPassword}`;
+    const base64Auth = btoa(authString);
     
-    console.log('OPTIONS response:', optionsResponse.status);
+    console.log('Auth details:', {
+      endpoint: apiEndpoint,
+      username: credentials.username,
+      passwordLength: credentials.applicationPassword?.length,
+      authStringLength: authString.length
+    });
 
-    // Now make the actual POST request
+    // Make the actual POST request
     const response = await fetch(apiEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${auth}`,
+        'Authorization': `Basic ${base64Auth}`,
         'Accept': 'application/json'
       },
       body: JSON.stringify({
         text_string: text,
-        category: category
+        category: category || ''
       })
     });
 

@@ -41,20 +41,21 @@ function pf_get_auth_header() {
 
 // Application Password Authentication
 function pf_authenticate_request($user) {
-    // Skip if not a REST request to our endpoint
-    if (!defined('REST_REQUEST') || !REST_REQUEST || 
-        !isset($_SERVER['REQUEST_URI']) || 
-        strpos($_SERVER['REQUEST_URI'], '/wp-json/custom/v1/strings') === false) {
+    // Skip if not a REST request
+    if (!defined('REST_REQUEST') || !REST_REQUEST) {
         return $user;
     }
 
-    // If already authenticated, return early
-    if ($user instanceof WP_User) {
+    // If already authenticated with a valid user, return early
+    if ($user instanceof WP_User && $user->ID > 0) {
         pf_log('Already authenticated', ['user_id' => $user->ID]);
         return $user;
     }
 
+    // Get the authorization header
     $auth_header = pf_get_auth_header();
+    pf_log('Auth header check', ['exists' => !empty($auth_header)]);
+
     if (empty($auth_header)) {
         pf_log('No authorization header found');
         return null;
@@ -84,22 +85,19 @@ function pf_authenticate_request($user) {
         return null;
     }
 
-    // Get and verify application passwords
-    $passwords = WP_Application_Passwords::get_user_application_passwords($user->ID);
-    if (empty($passwords)) {
-        pf_log('No application passwords found for user');
-        return null;
+    // Try application password authentication first
+    $app_user = WP_Application_Passwords::authenticate($user, $password);
+    if (!is_wp_error($app_user)) {
+        pf_log('Application password verified', ['user_id' => $user->ID]);
+        wp_set_current_user($user->ID);
+        return $user;
     }
 
-    foreach ($passwords as $pw) {
-        if (wp_check_password($password, $pw['password'])) {
-            pf_log('Application password verified', ['user_id' => $user->ID]);
-            wp_set_current_user($user->ID);
-            return $user;
-        }
-    }
+    pf_log('Application password auth failed', [
+        'error' => $app_user->get_error_message(),
+        'code' => $app_user->get_error_code()
+    ]);
 
-    pf_log('Invalid application password');
     return null;
 }
 
