@@ -9,10 +9,20 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+
+// Enable CORS for REST API
 add_action('rest_api_init', function () {
     $headers = getallheaders();
-    error_log("Authorization Header: " . $headers['Authorization'] ?? 'Not Set');
-});
+    //error_log("Authorization Header: " . $headers['Authorization'] ?? 'Not Set');
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        header("Access-Control-Allow-Origin: *"); // Replace * with your extension origin
+        header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization");
+        header("Access-Control-Allow-Credentials: true");
+        exit; // Exit early for preflight requests
+    }
+}, 15);
+
 // Register Custom Post Type
 function register_text_strings_cpt() {
     register_post_type('text_string', [
@@ -44,22 +54,29 @@ add_action('rest_api_init', 'register_save_strings_endpoint');
 
 // Callback for Saving Text Strings
 function save_text_string(WP_REST_Request $request) {
-    $authorization = $request->get_param('authorization');
-    error_log("Authorization (Body): " . $authorization);
-
-    if (!$authorization) {
-        return new WP_Error('auth_missing', 'Authorization header is missing.', ['status' => 401]);
+    // Get the username and password from the Authorization header
+    $authorization_header = $request->get_header('Authorization');
+    if (!$authorization_header || !preg_match('/Basic\s+(.*)/', $authorization_header, $matches)) {
+        return new WP_Error('auth_failed', 'Authorization header is missing or invalid.', ['status' => 401]);
     }
-    
+    list($username, $password) = explode(':', base64_decode($matches[1]), 2);
+
+    // Authenticate the user
+    $user = wp_authenticate($username, $password);
+    if (is_wp_error($user)) {
+        return new WP_Error('auth_failed', 'Invalid credentials.', ['status' => 401]);
+    }
+
+    // Proceed with saving the text
     $text_string = sanitize_text_field($request->get_param('text_string'));
     $category = sanitize_text_field($request->get_param('category'));
 
-    error_log("Sanitized Text: $text_string, Category: $category");
-
+    // Validate the text string
     if (empty($text_string)) {
         return new WP_Error('empty_text', 'Text string cannot be empty.', ['status' => 400]);
     }
 
+    // Save the text string as a post
     $post_id = wp_insert_post([
         'post_type' => 'text_string',
         'post_title' => wp_trim_words($text_string, 10, '...'),
@@ -67,11 +84,7 @@ function save_text_string(WP_REST_Request $request) {
         'post_status' => 'publish',
     ]);
 
-    if (is_wp_error($post_id)) {
-        error_log("Error creating post: " . $post_id->get_error_message());
-        return new WP_Error('post_error', 'Failed to save text string.', ['status' => 500]);
-    }
-
+    // Assign the post to the current user
     if (!empty($category)) {
         wp_set_object_terms($post_id, $category, 'string_category');
     }
