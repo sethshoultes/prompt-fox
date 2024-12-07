@@ -125,13 +125,23 @@ function displayPrompts(data) {
   if (data.total_pages > 1) {
       pagination.innerHTML = `
           <div class="pagination">
-              ${currentPage > 1 ? `<button onclick="changePage(${currentPage - 1})">Previous</button>` : ''}
+              ${currentPage > 1 ? `<button id="prev-btn">Previous</button>` : ''}
               <span>Page ${currentPage} of ${data.total_pages}</span>
-              ${currentPage < data.total_pages ? `<button onclick="changePage(${currentPage + 1})">Next</button>` : ''}
+              ${currentPage < data.total_pages ? `<button id="next-btn">Next</button>` : ''}
           </div>
       `;
   }
 }
+document.addEventListener('click', (event) => {
+  if (event.target.id === 'next-btn') {
+      changePage(currentPage + 1);
+  }
+});
+document.addEventListener('click', (event) => {
+  if (event.target.id === 'prev-btn') {
+      changePage(currentPage - 1);
+  }
+});
 
 async function loadPrompts() {
     const searchTerm = document.getElementById('search-input')?.value || '';
@@ -182,51 +192,51 @@ async function previewPrompt(promptId) {
 }
 
 function showModal(title, content) {
-  // Remove any existing modal
-  const existingModal = document.querySelector('.modal-overlay');
-  if (existingModal) {
-      existingModal.remove();
-  }
+    // Remove any existing modal
+    const existingModal = document.querySelector('.modal-overlay');
+    if (existingModal) {
+        existingModal.remove();
+    }
 
-  // Create modal elements
-  const modalOverlay = document.createElement('div');
-  modalOverlay.className = 'modal-overlay';
-  
-  const modalContent = document.createElement('div');
-  modalContent.className = 'modal-content';
-  
-  modalContent.innerHTML = `
-      <div class="modal-header">
-          <h3>${title}</h3>
-          <button class="close-modal">×</button>
-      </div>
-      <div class="modal-body">
-          <pre>${content}</pre>
-      </div>
-      <div class="modal-footer">
-          <button class="copy-btn">Copy</button>
-          <button class="close-btn">Close</button>
-      </div>
-  `;
+    // Create modal elements
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+    
+    modalContent.innerHTML = `
+        <div class="modal-header">
+            <h3>${title}</h3>
+            <button class="close-modal">×</button>
+        </div>
+        <div class="modal-body">
+            <pre>${content}</pre>
+        </div>
+        <div class="modal-footer">
+            <button class="copy-btn">Copy</button>
+            <button class="close-btn">Close</button>
+        </div>
+    `;
 
-  modalOverlay.appendChild(modalContent);
-  document.body.appendChild(modalOverlay);
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
 
-  // Attach event listeners to the buttons
-  const copyButton = modalContent.querySelector('.copy-btn');
-  const closeButton = modalContent.querySelector('.close-btn');
-  const closeModalButton = modalContent.querySelector('.close-modal');
+    // Attach event listeners to the buttons
+    const copyButton = modalContent.querySelector('.copy-btn');
+    const closeButton = modalContent.querySelector('.close-btn');
+    const closeModalButton = modalContent.querySelector('.close-modal');
 
-  copyButton.addEventListener('click', () => copyToClipboard(content));
-  closeButton.addEventListener('click', () => modalOverlay.remove());
-  closeModalButton.addEventListener('click', () => modalOverlay.remove());
+    copyButton.addEventListener('click', () => copyToClipboard(content));
+    closeButton.addEventListener('click', () => modalOverlay.remove());
+    closeModalButton.addEventListener('click', () => modalOverlay.remove());
 
-  // Close modal when clicking outside the modal content
-  modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) {
-          modalOverlay.remove();
-      }
-  });
+    // Close modal when clicking outside the modal content
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.remove();
+        }
+    });
 }
 
 async function copyToClipboard(promptId) {

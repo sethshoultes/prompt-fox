@@ -1,39 +1,214 @@
 body {
-    font-family: Arial, sans-serif;
-    padding: 10px;
-    width: 300px;
+  #search-input {
+      padding: 5px;
+      width: 100%;
+      margin-bottom: 10px;
+  }
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      width: 300px;
   }
   
   #app {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
   }
   
   textarea {
-    width: 100%;
-    height: 100px;
-    resize: none;
+      width: 100%;
+      height: 100px;
+      resize: none;
   }
   
   select {
-    padding: 5px;
+      padding: 5px;
   }
   
   button {
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
   }
   
   button:hover {
-    background-color: #0056b3;
+      background-color: #0056b3;
+  }
+  
+  .action-btn {
+      background-color: #f0f0f0;
+      color: #333;
+      padding: 5px 10px;
+      border-radius: 3px;
+  }
+  
+  .action-btn:hover {
+      background-color: #e0e0e0;
+  }
+  
+  .modal-footer button, .pagination button {
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 3px;
+  }
+  
+  .modal-footer button:hover, .pagination button:hover {
+      background-color: #0056b3;
   }
   
   #confirmation {
-    color: green;
-    font-size: 0.9em;
+      color: green;
+      font-size: 0.9em;
   }
   
+  /* Styles from popup.html */
+  .tab-buttons {
+      display: flex;
+      justify-content: space-around;
+  }
+  
+  .tab-button {
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      font-size: 1em;
+  }
+  
+  .tab-button.active {
+      border-bottom: 2px solid #007bff;
+  }
+  
+  .tab-content {
+      display: none;
+  }
+  
+  .tab-content.active {
+      display: block;
+  }
+  
+  #category, #save-button {
+      margin-top: 10px;
+  }
+  
+  .no-results {
+      color: #888;
+      font-style: italic;
+      text-align: center;
+  }
+  
+  .prompt-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+  }
+  
+  .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 5px;
+  }
+  
+  .prompt-preview {
+      margin-bottom: 5px;
+  }
+  
+  .category-tag {
+      background-color: #eee;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 0.8em;
+  }
+  
+  .prompt-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 5px;
+  }
+  
+  .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9em;
+  }
+  
+  .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+  
+  .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 80%;
+      max-height: 80%;
+      overflow: auto;
+  }
+  
+  .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+  }
+  
+  .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+  }
+  
+  .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+      gap: 10px;
+  }
+  
+  /* Styles from options.html */
+  .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+  }
+  
+  .form-group {
+      margin-bottom: 20px;
+  }
+  
+  .small {
+      font-size: 0.8em;
+      color: #888;
+  }
+  
+  #status {
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 5px;
+      display: none;
+  }
+  
+  #status.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+  }
+  
+  #status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+  }
