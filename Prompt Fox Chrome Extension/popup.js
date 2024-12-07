@@ -1,49 +1,47 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const saveButton = document.getElementById("save-button");
-    const textInput = document.getElementById("text-input");
-    const categorySelect = document.getElementById("category");
-    const confirmation = document.getElementById("confirmation");
-  
-    // Prefill the text area with the captured text when the popup is opened
-    chrome.runtime.sendMessage({ type: "getCapturedText" }, (response) => {
+// popup.js
+document.addEventListener('DOMContentLoaded', () => {
+  const textInput = document.getElementById('text-input');
+  const categorySelect = document.getElementById('category');
+  const saveButton = document.getElementById('save-button');
+  const confirmation = document.getElementById('confirmation');
+
+  // Get captured text when popup opens
+  chrome.runtime.sendMessage({ type: "getCapturedText" }, (response) => {
       if (response && response.text) {
-        textInput.value = response.text; // Populate the textarea with captured text
-      } else {
-        console.log("No captured text available.");
+          textInput.value = response.text;
       }
-    });
-  
-    // Listener for the save button
-    saveButton.addEventListener("click", () => {
+  });
+
+  // Listen for text capture events while popup is open
+  chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === "textCaptured" && message.text) {
+          textInput.value = message.text;
+      }
+  });
+
+  // Handle save button click
+  saveButton.addEventListener('click', () => {
       const text = textInput.value.trim();
       const category = categorySelect.value;
-  
+
       if (!text) {
-        alert("Please enter some text to save.");
-        return;
+          alert('Please enter some text to save.');
+          return;
       }
-  
-      // Send the text and category to background.js for saving to WordPress
+
       chrome.runtime.sendMessage(
-        { type: "saveText", text: text, category: category },
-        (response) => {
-          if (response && response.status === "success") {
-            confirmation.style.display = "block"; // Show confirmation message
-            setTimeout(() => {
-              confirmation.style.display = "none";
-            }, 2000);
-          } else {
-            alert("Failed to save text: " + (response?.message || "Unknown error."));
+          { type: "saveText", text, category },
+          (response) => {
+              if (response.status === "success") {
+                  confirmation.style.display = "block";
+                  confirmation.textContent = "Saved successfully!";
+                  setTimeout(() => {
+                      confirmation.style.display = "none";
+                  }, 2000);
+              } else {
+                  alert(response.message || "Failed to save text.");
+              }
           }
-        }
       );
-    });
-  
-    // Listener for receiving captured text (if background.js sends it directly)
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === "captureText") {
-        textInput.value = message.text; // Update the text area with the captured text
-      }
-    });
   });
-  
+});
