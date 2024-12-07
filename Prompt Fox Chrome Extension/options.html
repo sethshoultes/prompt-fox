@@ -3,32 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <title>Prompt Fox Settings</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f1;
+            color: #1e1e1e;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: #1e1e1e;
+            font-size: 24px;
+            font-weight: 500;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1e1e1e;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #2271b1;
+            box-shadow: 0 0 0 1px #2271b1;
+            outline: none;
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: #646970;
+            margin-top: 4px;
+        }
+
+        button {
+            background: #2271b1;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background: #135e96;
+        }
+
+        button:active {
+            background: #0a4b78;
+        }
+
+        #status {
+            margin-top: 16px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        #status.success {
+            background-color: #edfaef;
+            color: #00844e;
+            border: 1px solid #a7e1b5;
+        }
+
+        #status.error {
+            background-color: #fcf0f1;
+            color: #cc1818;
+            border: 1px solid #ffabaf;
+        }
+
+        .info-box {
+            background: #f6f7f7;
+            border-left: 4px solid #2271b1;
+            padding: 12px;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Prompt Fox Settings</h1>
-        
-        <div class="form-group">
-            <label for="apiBaseUrl">WordPress Site URL:</label>
-            <input type="url" id="apiBaseUrl" placeholder="http://your-wordpress-site.com">
-        </div>
+        <div class="card">
+            <h1>
+                <img src="icon48.png" alt="Prompt Fox" class="logo">
+                Prompt Fox Settings
+            </h1>
 
-        <div class="form-group">
-            <label for="username">WordPress Username:</label>
-            <input type="text" id="username">
-        </div>
+            <div class="form-group">
+                <label for="apiBaseUrl">WordPress Site URL</label>
+                <input type="text" id="apiBaseUrl" placeholder="https://your-site.com">
+                <div class="helper-text">Enter your WordPress site URL (e.g., https://example.com)</div>
+            </div>
 
-        <div class="form-group">
-            <label for="applicationPassword">Application Password:</label>
-            <input type="password" id="applicationPassword">
-            <small>Generate this in WordPress under Users → Profile → Application Passwords</small>
-        </div>
+            <div class="form-group">
+                <label for="username">WordPress Username</label>
+                <input type="text" id="username">
+                <div class="helper-text">Your WordPress username</div>
+            </div>
 
-        <button id="save">Save Settings</button>
-        <div id="status"></div>
+            <div class="form-group">
+                <label for="applicationPassword">Application Password</label>
+                <input type="password" id="applicationPassword">
+                <div class="helper-text">Generate this in WordPress under Users → Profile → Application Passwords</div>
+            </div>
+
+            <button id="save">Save Settings</button>
+            
+            <div id="status"></div>
+
+            <div class="info-box">
+                <strong>Note:</strong> After saving, test the connection by selecting some text on ChatGPT and using the extension popup to save it.
+            </div>
+        </div>
     </div>
-
     <script src="options.js"></script>
 </body>
 </html>
