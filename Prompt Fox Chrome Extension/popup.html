@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Prompt Fox</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="tab-buttons">
+        <button class="tab-button active" data-tab="save">Save Prompt</button>
+        <button class="tab-button" data-tab="browse">Browse Prompts</button>
+    </div>
+
+    <div id="save-tab" class="tab-content active">
+        <textarea id="text-input" placeholder="Enter or paste text here..."></textarea>
+        <select id="category">
+            <option value="">Select Category</option>
+            <option value="general">General</option>
+            <option value="ideas">Ideas</option>
+            <option value="tasks">Tasks</option>
+            <option value="quotes">Quotes</option>
+            <option value="funny">Funny</option>
+            <option value="advice">Advice</option>
+            <option value="others">Others</option>
+        </select> 
+        <button id="save-button">Save</button>
+        <div id="confirmation"></div>
+    </div>
+
+    <div id="browse-tab" class="tab-content">
+        <input type="text" id="search-input" class="search-box" placeholder="Search prompts...">
+        <div id="prompts-list"></div>
+        <div id="pagination"></div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
