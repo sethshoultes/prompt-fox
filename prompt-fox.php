@@ -251,34 +251,100 @@ function render_prompt_fox_settings() {
     $rest_api_url = get_rest_url(null, 'custom/v1/strings');
     $user = wp_get_current_user();
     ?>
+    <style>
+        .prompt-fox-wrap {
+            max-width: 800px;
+            margin: 20px 0;
+        }
+        .prompt-fox-card {
+            background: white;
+            border: 1px solid #ccd0d4;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .prompt-fox-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .prompt-fox-field {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .prompt-fox-list {
+            margin-left: 20px;
+        }
+        .prompt-fox-list li {
+            margin-bottom: 10px;
+        }
+        .prompt-fox-alert {
+            background: #fff8e5;
+            border-left: 4px solid #ffb900;
+            padding: 12px;
+            margin: 15px 0;
+        }
+        .prompt-fox-status {
+            display: inline-block;
+            background: #00a32a;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+    </style>
+
     <div class="wrap">
-        <h1>Prompt Fox Settings</h1>
-        <div class="notice notice-info">
-            <p><strong>REST API Endpoint:</strong> <?php echo esc_url($rest_api_url); ?></p>
-            <p><strong>Current User:</strong> <?php echo esc_html($user->user_login); ?></p>
-        </div>
-        
-        <div class="card">
-            <h2>Setup Instructions</h2>
-            <ol>
-                <li>Generate an Application Password:
-                    <ul>
-                        <li>Go to <strong>Users > Profile</strong></li>
-                        <li>Scroll to <strong>Application Passwords</strong></li>
-                        <li>Name: "Prompt Fox Extension"</li>
-                        <li>Copy the generated password exactly (including spaces)</li>
-                    </ul>
-                </li>
-                <li>Configure Extension:
-                    <ul>
-                        <li>Click extension icon</li>
-                        <li>Select "Options"</li>
-                        <li>API URL: <code><?php echo esc_url($rest_api_url); ?></code></li>
-                        <li>Username: <code><?php echo esc_html($user->user_login); ?></code></li>
-                        <li>Password: Your generated application password</li>
-                    </ul>
-                </li>
-            </ol>
+        <h1>Prompt Fox Settings <span class="prompt-fox-status">Active</span></h1>
+
+        <div class="prompt-fox-wrap">
+            <!-- API Information -->
+            <div class="prompt-fox-card">
+                <div class="prompt-fox-header">
+                    <h2>API Configuration</h2>
+                </div>
+                <p><strong>REST API Endpoint:</strong></p>
+                <div class="prompt-fox-field"><?php echo esc_url($rest_api_url); ?></div>
+                <p><strong>Current User:</strong></p>
+                <div class="prompt-fox-field"><?php echo esc_html($user->user_login); ?></div>
+            </div>
+
+            <!-- Setup Instructions -->
+            <div class="prompt-fox-card">
+                <div class="prompt-fox-header">
+                    <h2>Setup Instructions</h2>
+                </div>
+                
+                <h3>1. Generate an Application Password</h3>
+                <ul class="prompt-fox-list">
+                    <li>Go to <strong>Users → Profile</strong></li>
+                    <li>Scroll to <strong>Application Passwords</strong></li>
+                    <li>Enter name: "Prompt Fox Extension"</li>
+                    <li>Copy the generated password (including spaces)</li>
+                </ul>
+
+                <h3>2. Configure Extension</h3>
+                <ul class="prompt-fox-list">
+                    <li>Click the extension icon in your browser</li>
+                    <li>Select "Options"</li>
+                    <li>Fill in:
+                        <div class="prompt-fox-field">
+                            API URL: <?php echo esc_url($rest_api_url); ?><br>
+                            Username: <?php echo esc_html($user->user_login); ?><br>
+                            Password: [Your application password]
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="prompt-fox-alert">
+                    <strong>Important:</strong> Keep your application password secure. You can revoke it at any time from your WordPress profile if needed.
+                </div>
+            </div>
         </div>
     </div>
     <?php
