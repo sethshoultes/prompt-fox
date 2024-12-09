@@ -169,15 +169,9 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 
 ## Screenshots
 
-![Prompt Capture](screenshots/capture.png)
-![Prompt Management](screenshots/manage.png)
-![Automation Setup](screenshots/automation.png)
-
-## Related Projects
-
-- [Prompt Fox API](https://github.com/promptfox/api)
-- [Prompt Fox Docs](https://github.com/promptfox/docs)
-- [Prompt Fox Templates](https://github.com/promptfox/templates)
+![Prompt Fox Selection Feature](https://github.com/user-attachments/assets/e580155a-0b2f-4d5f-a4d8-05aee6fe7672)
+![Prompt Fox ! 0](https://github.com/user-attachments/assets/c072ebc2-5a80-4a5d-81c0-101629fd4778)
+https://www.youtube.com/watch?v=DAF_x0Xmwf8
 
 ---
 
