@@ -2,10 +2,6 @@
 
 A powerful prompt management system combining a WordPress plugin and Chrome extension for AI prompt capture, organization, and automation.
 
-![GitHub license](https://img.shields.io/github/license/promptfox/prompt-fox)
-![WordPress version](https://img.shields.io/wordpress/plugin/v/prompt-fox)
-![Chrome Web Store version](https://img.shields.io/chrome-web-store/v/prompt-fox)
-
 ## Overview
 
 Prompt Fox is a two-part system designed to streamline AI prompt management and automation. It comprises a WordPress plugin for secure storage and a Chrome extension for easy capture and reuse.
@@ -91,7 +87,7 @@ graph LR
 
 ### Example Workflows
 
-- Blog post production pipeline
+- Blog post-production pipeline
 - Marketing campaign automation
 - Research paper compilation
 - Social media content scheduling
@@ -170,8 +166,8 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 ## Screenshots
 
 ![Prompt Fox Selection Feature](https://github.com/user-attachments/assets/e580155a-0b2f-4d5f-a4d8-05aee6fe7672)
+
 ![Prompt Fox ! 0](https://github.com/user-attachments/assets/c072ebc2-5a80-4a5d-81c0-101629fd4778)
-https://www.youtube.com/watch?v=DAF_x0Xmwf8
 
 ---
 
