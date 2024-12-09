@@ -71,7 +71,7 @@ GET /wp-json/custom/v1/strings?page=1&search=keyword
 GET /wp-json/custom/v1/strings/{id}
 ```
 
-## Automation
+## Automation Ideas
 
 ### Zapier Integration
 
