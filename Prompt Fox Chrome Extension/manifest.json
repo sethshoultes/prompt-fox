@@ -16,7 +16,7 @@
     },
     "content_scripts": [
       {
-        "matches": ["https://chat.openai.com/*"],
+        "matches": ["https://chat.openai.com/*", "https://*.openai.com/*", "https://*.wordpress.com/*", "https://www.facebook.com/"],
         "js": ["content.js"]
       }
     ],
@@ -28,12 +28,12 @@
           "icon16.png",
           "icon48.png",
           "icon128.png"
-        ],
-        "matches": ["<all_urls>"]
+        ],"matches": ["<all_urls>"]
+        
       }
     ],
     "options_page": "options.html",
     "permissions": ["activeTab", "storage", "scripting"],
-    "host_permissions": ["https://chat.openai.com/*"]
+    "host_permissions": ["https://chat.openai.com/*", "https://*.openai.com/*", "https://*.wordpress.com/*", "https://www.facebook.com/"]
   }
   
